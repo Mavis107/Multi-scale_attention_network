@@ -40,57 +40,57 @@ class Self_Attn(nn.Module):
                 out : self attention value + input feature 
                 attention: B X N X N (N is Width*Height)
         """
-        # 獲取輸入的尺寸信息
+        # Get the input dimensions
         m_batchsize, C, width, height = x.size()
 
-        # 使用 f_conv 與 g_conv 計算 self attention 的分數
-        proj_f = self.f_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # [32, 169, 64] # (B, C, W*H) 轉換為 (B, W*H, C) # 為了使 f 的每個通道成為 self attention 計算中的一個向量
-        proj_g = self.g_conv(x).view(m_batchsize, -1, width * height)  # [32, 64, 169] # B X C X W*H
+        # Calculate self-attention scores using f_conv and g_conv
+        proj_f = self.f_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # Convert (B, C, W*H) to (B, W*H, C) 
+        proj_g = self.g_conv(x).view(m_batchsize, -1, width * height)  # B X C X W*H
 
-        # 計算能量（分數）
-        energy = torch.bmm(proj_f, proj_g)  # 矩陣乘法操作  # [32, 169, 169]
-        attention_1 = self.softmax(energy)  # B X (N) X (N) # [32, 169, 169]
-
-        # 使用 h_conv 計算權重調整後的特徵值
-        # 使用 Bilinear 插值將特徵圖的大小調整為新的大小，(new_height, new_width)
+        # Calculate similarity score
+        energy = torch.bmm(proj_f, proj_g)  # Matrix multiplication operation
+        attention_1 = self.softmax(energy)  # B X (N) X (N)
+        
+        # Use h_conv to calculate the weighted adjusted feature values
+        # Use Bilinear interpolation to adjust the size of the feature map to the new size (new_height, new_width)
         new_size = (13, 13)
         y = F.interpolate(features_after_fifth_maxpool, size=new_size, mode='bilinear', align_corners=False)
-        proj_h = self.h_conv(y).view(m_batchsize, -1, width * height)  # B X C X N # [32, 169, 169]
-        attention_2 = attention_1 + proj_h                             # [32, 169, 169]
+        proj_h = self.h_conv(y).view(m_batchsize, -1, width * height)  # B X C X N 
+        attention_2 = attention_1 + proj_h                             
 
-        z = features_after_eighth_maxpool # [32, 256, 13, 13]
-        proj_u = self.u_conv(z).view(m_batchsize, -1, width * height)  # B X C X N # [32, 169, 169]
-        out = attention_2 + proj_u                                     # [32, 169, 169]
+        z = features_after_eighth_maxpool
+        proj_u = self.u_conv(z).view(m_batchsize, -1, width * height)  # B X C X N 
+        out = attention_2 + proj_u                                    
 
-        out = out.view(m_batchsize, 169, width, height) # [32, 169, 13, 13]
-        out = self.channel_conv(out).view(m_batchsize, -1, width * height) # [32, 512, 169]
-        out = out.view(m_batchsize, 512, width, height)  # [32, 512, 13, 13]
-        # 對輸出進行 gamma 調整並加上原始輸入特徵圖
+        out = out.view(m_batchsize, 169, width, height) 
+        out = self.channel_conv(out).view(m_batchsize, -1, width * height) 
+        out = out.view(m_batchsize, 512, width, height) 
+        # Apply gamma adjustment to the output and add the original input feature map
         out = self.gamma * out + x
         return out
 
 
-# 自定義的帶有注意力模塊的 SqueezeNet
+# Multi-Scale Attention Mechanism Network
 class SqueezeNetWithAttention(nn.Module):
     def __init__(self, num_classes):
         super(SqueezeNetWithAttention, self).__init__()
         self.squeezenet = models.squeezenet1_1(pretrained=True)
-        self.attention = Self_Attn(in_dim=512, activation='relu') # squeezenet 最後一層 512
+        self.attention = Self_Attn(in_dim=512, activation='relu') # The last layer of SqueezeNet has 512 channels
         self.fc = nn.Linear(512, num_classes) # 512 -> 6
 
     def forward(self, input):
         x = self.squeezenet.features(input)
-        # 提取第五個 MaxPooling 層之前的特徵圖
+        # Extract the feature map before the fifth MaxPooling layer
         features_before_fifth_maxpool = self.squeezenet.features[:5](input)
-        # 提取第五個 MaxPooling 層之後的特徵圖
+        # Extract the feature map after the fifth MaxPooling layer
         features_after_fifth_maxpool = self.squeezenet.features[5](features_before_fifth_maxpool)
+        # Extract the feature map before the eighth MaxPooling layer
         features_before_eighth_maxpool = self.squeezenet.features[:8](input)        
-        # 提取第八個 MaxPooling 層之後的特徵圖
+        # Extract the feature map after the eighth MaxPooling layer
         features_after_eighth_maxpool = self.squeezenet.features[8](features_before_eighth_maxpool)
-        x = self.attention(x, features_after_fifth_maxpool, features_after_eighth_maxpool)  # [32, 512, 13, 13]
+        x = self.attention(x, features_after_fifth_maxpool, features_after_eighth_maxpool) 
         x = x.mean([2, 3])  # Global average pooling # [32, 512]
-        # 將特徵圖展平成一維向量
-        x = self.fc(x)
+        x = self.fc(x)      # Flatten the feature map into a 1D vector
         return x
 
 
