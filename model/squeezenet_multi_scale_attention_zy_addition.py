@@ -15,7 +15,7 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader, random_split
 
 
-# 自定義的注意力模塊 
+# Multi-Scale Attention Mechanism
 class Self_Attn(nn.Module):
     """ Self attention Layer"""
     def __init__(self,in_dim,activation):
