@@ -62,7 +62,7 @@ The [Malaria Cell Images Dataset](https://www.kaggle.com/datasets/iarunava/cell-
 - **Directory Structure**:
     ```
     dataset/
-        Malaria/
+        malaria_dataset/
             class_1/
                 image_1.jpg
                 image_2.jpg
