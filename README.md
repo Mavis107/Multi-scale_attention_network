@@ -37,7 +37,7 @@ We propose a multi-scale attention network for steel surface defect classificati
 
 ## Datasets
 
-### **NEU Surface Defect Dataset**
+### 1. **NEU Surface Defect Dataset**
 
 The [NEU Surface Defect Dataset](https://www.kaggle.com/datasets/kaustubhdikshit/neu-surface-defect-database) consists of images of steel surfaces with various types of defects. It is used for training and evaluating defect detection models.
 
