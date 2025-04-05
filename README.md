@@ -94,7 +94,7 @@ python train.py \
 
 
 ### Inference
-Use the trained model to make predictions:
+Use the trained model to make predictions on new data by running the following command:
 
 ```bash
 python inference.py \
