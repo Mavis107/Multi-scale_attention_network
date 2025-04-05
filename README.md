@@ -1,4 +1,9 @@
 # A Multi-Scale Attention Network for Steel Surface Defect Recognition
+**Authors**: Chin Ju Chen, Ren-Shiou Liu  
+**Institute of Information Management, National Cheng Kung University, Tainan, 701401, Taiwan (R.O.C.)**
+
+
+## Description
 
 We propose a multi-scale attention network for steel surface defect classification. Experimental results show that the proposed method achieves a classification accuracy of 99.72% while reducing computational resource consumption during training on the NEU surface defect dataset, maintaining an accuracy of over 92% when classifying multiple types of defects with less data. Additionally, the model demonstrates good generalization ability across various application domains.
 
