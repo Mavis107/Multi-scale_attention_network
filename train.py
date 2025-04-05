@@ -54,7 +54,7 @@ def main():
     # Choose model type
     if args.model_type == 'MSA_Addition_Pool35':
         model = MSA_Addition_Pool35(args.num_classes)
-    elif args.model_type == 'MSA_Addition_Pool35':
+    elif args.model_type == 'MSA_Addition_Pool53':
         model = MSA_Addition_Pool53(args.num_classes)
     else:
         raise ValueError("Invalid model type")
