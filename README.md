@@ -1,6 +1,6 @@
 # A Multi-Scale Attention Network for Steel Surface Defect Recognition
-**Authors**: Chin Ju Chen, Ren-Shiou Liu  
-**Institute of Information Management, National Cheng Kung University, Tainan, 701401, Taiwan (R.O.C.)**
+Authors: Chin Ju Chen, Ren-Shiou Liu  
+Institute of Information Management, National Cheng Kung University, Tainan, 701401, Taiwan (R.O.C.)
 
 
 ## Description
