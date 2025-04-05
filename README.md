@@ -27,7 +27,7 @@ In the steel industry, the detection and analysis of surface defects are critica
 2. Create a virtual environment (optional but recommended):
     ```bash
     python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    source venv/bin/activate 
     ```
 
 3. Install dependencies:
