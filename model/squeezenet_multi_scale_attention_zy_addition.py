@@ -1,5 +1,5 @@
 """
-   Pixel-wise matrix addition with x, z and y (Pool3_Pool5)
+   Pixel-wise matrix addition with x, z and y (Pool3_Pool5) * final version *
 """
 
 from symbol import xor_expr
